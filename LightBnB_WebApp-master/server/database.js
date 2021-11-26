@@ -17,35 +17,21 @@ const pool = new Pool({
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithEmail = function (email) {
-  // let user;
-  // for (const userId in users) {
-  //   user = users[userId];
-  //   console.log("user", user);
-  //   if (user.email.toLowerCase() === email.toLowerCase()) {
-  //     break;
-  //   } else {
-  //     user = null;
-  //   }
-  // }
-  // return Promise.resolve(user);
-
-  return Promise.resolve(
-    pool
-      .query(
-        `
+  return pool
+    .query(
+      `
       SELECT *
       FROM users
       WHERE email = $1;
     `,
-        [email]
-      )
-      .then((res) => {
-        return res.rows[0];
-      })
-      .catch((err) => {
-        console.log(err.message);
-      })
-  );
+      [email]
+    )
+    .then((res) => {
+      return res.rows[0];
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
 };
 exports.getUserWithEmail = getUserWithEmail;
 
@@ -55,23 +41,21 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function (id) {
-  return Promise.resolve(
-    pool
-      .query(
-        `
+  return pool
+    .query(
+      `
       SELECT *
       FROM users
       WHERE id = $1;
     `,
-        [id]
-      )
-      .then((res) => {
-        return res.rows[0];
-      })
-      .catch((err) => {
-        console.log(err.message);
-      })
-  );
+      [id]
+    )
+    .then((res) => {
+      return res.rows[0];
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
 };
 exports.getUserWithId = getUserWithId;
 
@@ -87,23 +71,21 @@ const addUser = function (user) {
   // console.log("user", user);
   // return Promise.resolve(user);
 
-  return Promise.resolve(
-    pool
-      .query(
-        `
+  return pool
+    .query(
+      `
     INSERT INTO users (name, email, password)
     VALUES ($1, $2, $3)
     RETURNING *;
     `,
-        [user.name, user.email, user.password]
-      )
-      .then((res) => {
-        return res.rows[0];
-      })
-      .catch((err) => {
-        console.log(err.message);
-      })
-  );
+      [user.name, user.email, user.password]
+    )
+    .then((res) => {
+      return res.rows[0];
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
 };
 exports.addUser = addUser;
 
@@ -115,10 +97,9 @@ exports.addUser = addUser;
  * @return {Promise<[{}]>} A promise to the reservations.
  */
 const getAllReservations = function (guest_id, limit = 10) {
-  return Promise.resolve(
-    pool
-      .query(
-        `SELECT properties.*, reservations.*
+  return pool
+    .query(
+      `SELECT properties.*, reservations.*
           FROM reservations
           JOIN properties ON reservations.property_id = properties.id
           JOIN property_reviews ON properties.id = property_reviews.property_id
@@ -126,15 +107,14 @@ const getAllReservations = function (guest_id, limit = 10) {
           GROUP BY properties.id, reservations.id
           ORDER BY reservations.start_date
           LIMIT $2;`,
-        [guest_id, limit]
-      )
-      .then((res) => {
-        return res.rows;
-      })
-      .catch((err) => {
-        console.log(err.message);
-      })
-  );
+      [guest_id, limit]
+    )
+    .then((res) => {
+      return res.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
 };
 exports.getAllReservations = getAllReservations;
 
@@ -239,36 +219,34 @@ const addProperty = function (property) {
   // properties[propertyId] = property;
   // return Promise.resolve(property);
 
-  return Promise.resolve(
-    pool
-      .query(
-        `INSERT INTO properties (owner_id, title, description, thumbnail_photo_url,
+  return pool
+    .query(
+      `INSERT INTO properties (owner_id, title, description, thumbnail_photo_url,
         cover_photo_url, cost_per_night, street, city, province, post_code, country, parking_spaces, number_of_bathrooms, number_of_bedrooms)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
         RETURNING *;`,
-        [
-          property.owner_id,
-          property.title,
-          property.description,
-          property.thumbnail_photo_url,
-          property.cover_photo_url,
-          property.cost_per_night * 100,
-          property.street,
-          property.city,
-          property.province,
-          property.post_code,
-          property.country,
-          property.parking_spaces,
-          property.number_of_bathrooms,
-          property.number_of_bedrooms,
-        ]
-      )
-      .then((res) => {
-        return res.rows[0];
-      })
-      .catch((err) => {
-        console.log(err.message);
-      })
-  );
+      [
+        property.owner_id,
+        property.title,
+        property.description,
+        property.thumbnail_photo_url,
+        property.cover_photo_url,
+        property.cost_per_night * 100,
+        property.street,
+        property.city,
+        property.province,
+        property.post_code,
+        property.country,
+        property.parking_spaces,
+        property.number_of_bathrooms,
+        property.number_of_bedrooms,
+      ]
+    )
+    .then((res) => {
+      return res.rows[0];
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
 };
 exports.addProperty = addProperty;
